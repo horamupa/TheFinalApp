@@ -13,8 +13,10 @@ struct RootView: View {
     @State var isShowSignUp: Bool = false
     var body: some View {
         ZStack {
-            NavigationStack {
-                SettingsView(isShowSignUp: $isShowSignUp)
+            if isShowSignUp != false {
+                NavigationStack {
+                    SettingsView(isShowSignUp: $isShowSignUp)
+                }
             }
         }
         .onAppear {

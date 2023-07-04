@@ -7,54 +7,20 @@
 
 import SwiftUI
 
-@MainActor
-class SettingsViewModel: ObservableObject {
-    
-    func logOff() throws {
-        try AuthManager.shared.signOut()
-    }
-    
-    func resetPassword() async throws {
-        let user = try AuthManager.shared.checkUserInDatabase()
-        guard let mail = user.email else { throw URLError(.cancelled) }
-        try await AuthManager.shared.resetPassword(email: mail)
-    }
-    
-    func updateEmail(email: String) async throws {
-        let fakeEmail = "twst@test.com"
-        try await AuthManager.shared.updateEmail(email: fakeEmail)
-    }
-    
-    func updatePassword(password: String) async throws {
-        let fakePass = "123454"
-        try await AuthManager.shared.updatePassword(password: fakePass)
-    }
-}
-
 struct SettingsView: View {
-    
     @Binding var isShowSignUp: Bool
     @StateObject var vm: SettingsViewModel = SettingsViewModel()
     
     var body: some View {
         List {
-            Button {
-                do {
-                    try vm.logOff()
-                    isShowSignUp = true
-                } catch {
-                    print(error.localizedDescription)
-                }
-              
-            } label: {
-                Text("Log out")
+            logOffButton
+            
+            if vm.authProviders.contains(.email) {
+                mailSection
             }
-            
-                serviceButtons
-           
-
-            
-                
+        }
+        .onAppear {
+            vm.getProviders()
         }
     }
 }
@@ -69,7 +35,7 @@ struct SettingsView_Previews: PreviewProvider {
 
 
 extension SettingsView {
-    private var serviceButtons: some View {
+    private var mailSection: some View {
         
         Section {
             Button {
@@ -116,6 +82,19 @@ extension SettingsView {
             }
         } header: {
             Text("Service Buttons")
+        }
+    }
+    
+    private var logOffButton: some View {
+        Button {
+            do {
+                try vm.logOff()
+                isShowSignUp = true
+            } catch {
+                print(error.localizedDescription)
+            }
+        } label: {
+            Text("Log out")
         }
     }
 }
