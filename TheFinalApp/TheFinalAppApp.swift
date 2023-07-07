@@ -12,6 +12,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
   func application(_ application: UIApplication,
                    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
     FirebaseApp.configure()
+//    FirebaseApp.app()?.isDataCollectionDefaultEnabled = true
     return true
   }
 }
@@ -24,9 +25,9 @@ struct TheFinalAppApp: App {
     var body: some Scene {
         WindowGroup {
             RootView()
-            
         }
     }
 }
+
 
 

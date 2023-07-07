@@ -13,7 +13,7 @@ struct RootView: View {
     @State var isShowSignUp: Bool = false
     var body: some View {
         ZStack {
-            if isShowSignUp != false {
+            if !isShowSignUp {
                 NavigationStack {
                     SettingsView(isShowSignUp: $isShowSignUp)
                 }
@@ -21,9 +21,10 @@ struct RootView: View {
         }
         .onAppear {
             guard let user = try? AuthManager.shared.checkUserInDatabase() else {
+                self.isShowSignUp = true
                 return
             }
-            self.isShowSignUp = user == nil ? true : false
+            self.isShowSignUp = (user == nil ? true : false)
         }
         .fullScreenCover(isPresented: $isShowSignUp) {
             NavigationStack {

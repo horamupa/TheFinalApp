@@ -20,9 +20,11 @@ struct AuthResultModel {
     }
 }
 
+
 enum AuthProviderOption: String {
     case email = "password"
     case google = "google.com"
+    case apple = "apple.com"
 }
 
 final class AuthManager {
@@ -97,6 +99,13 @@ extension AuthManager {
     func SignInGoogle(idToken: String, accessToken: String ) async throws -> AuthResultModel {
         let credential = GoogleAuthProvider.credential(withIDToken: idToken,
                                                        accessToken: accessToken)
+        return try await SignInCredential(credential: credential)
+    }
+    
+    @discardableResult
+    func SignInApple(token: SignInWithAppleResult) async throws -> AuthResultModel {
+        // Initialize a Firebase credential, including the user's full name.
+        let credential = OAuthProvider.credential(withProviderID: AuthProviderOption.apple.rawValue, idToken: token.token, rawNonce: token.nonce)
         return try await SignInCredential(credential: credential)
     }
     
