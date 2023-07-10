@@ -9,49 +9,54 @@ import SwiftUI
 import GoogleSignInSwift
 
 @MainActor
-
 final class AuthenticationViewModel: ObservableObject {
-   
     @Published var didSignInWithApple: Bool = false
-//    let signInAppleHelper = SignInAppleHelper()
     
     func signInWithGoogle() async throws {
         let user = try await SignInGoogleHelper().signIn()  // Get user from GID
         
-        let result = try await AuthManager.shared.SignInGoogle(idToken: user.idToken, accessToken: user.accessToken) // Login to FireBase with Google User
+        let result = try await AuthenticationManager.shared.SignInGoogle(idToken: user.idToken, accessToken: user.accessToken) // Login to FireBase with Google User
     }
     
     func signInWithApple() async throws {
         let helper = SignInAppleHelper()
         let tokens = try await helper.startSignInWithAppleFlow()
         
-        try await AuthManager.shared.SignInApple(token: tokens)
-        
-//        signInAppleHelper.startSignInWithAppleFlow { result in
-//            switch result {
-//            case .success(let result):
-//                Task {
-//                    do {
-//                        try await AuthManager.shared.SignInApple(token: result)
-//                        self.didSignInWithApple = true
-//                    } catch {
-//
-//                    }
-//                }
-//            case .failure(let error):
-//                print(error.localizedDescription)
-//            }
-//        }
+        try await AuthenticationManager.shared.SignInApple(token: tokens)
+    }
+    
+    func signInAnonymously() async throws {
+        try await AuthenticationManager.shared.SignInAnonymous()
     }
 }
 
 struct AuthView: View {
-    
     @StateObject var vm = AuthenticationViewModel()
     @Binding var isShowSignUp: Bool
     
     var body: some View {
         VStack {
+            Button(action: {
+                Task {
+                    do {
+                        try await vm.signInAnonymously()
+                        isShowSignUp = false
+                    } catch {
+                        print(error.localizedDescription)
+                    }
+                }
+            }, label: {
+                Text("Sign in Anonymously")
+                    .font(.headline)
+                    .foregroundColor(.white)
+                    .frame(height: 55)
+                    .frame(maxWidth: .infinity)
+                    .background {
+                        Color.orange
+                    }
+                    .cornerRadius(10)
+            })
+            
             NavigationLink {
                 MailAuthView(isShowSignUp: $isShowSignUp)
             } label: {

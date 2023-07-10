@@ -15,12 +15,19 @@ struct SettingsView: View {
         List {
             logOffButton
             
+            deleteAccountButton
+
             if vm.authProviders.contains(.email) {
                 mailSection
+            }
+            
+            if vm.authUser?.isAnonymous == true {
+                anonymousSection
             }
         }
         .onAppear {
             vm.getProviders()
+            vm.setAuthUser()
         }
     }
 }
@@ -36,7 +43,6 @@ struct SettingsView_Previews: PreviewProvider {
 
 extension SettingsView {
     private var mailSection: some View {
-        
         Section {
             Button {
                 Task {
@@ -85,6 +91,45 @@ extension SettingsView {
         }
     }
     
+    private var anonymousSection: some View {
+        Section {
+            Button("Link Google Account") {
+                Task {
+                    do {
+                        try await vm.linkGoogleAccount()
+                        print("Google Auth Linked")
+                    } catch {
+                        print(error.localizedDescription)
+                    }
+                }
+            }
+            
+            Button("Link Apple Account") {
+                Task {
+                    do {
+                        try await vm.linkAppleAccount()
+                        print("Apple Auth Linked")
+                    } catch {
+                        print(error.localizedDescription)
+                    }
+                }
+            }
+            
+            Button("Link Email Account") {
+                Task {
+                    do {
+                        try await vm.linkEmailAccount()
+                        print("Email Auth Linked")
+                    } catch {
+                        print(error.localizedDescription)
+                    }
+                }
+            }
+        } header: {
+            Text("Create Account")
+        }
+    }
+    
     private var logOffButton: some View {
         Button {
             do {
@@ -95,6 +140,22 @@ extension SettingsView {
             }
         } label: {
             Text("Log out")
+        }
+    }
+    
+    #warning("make here an extra notification about: hey, it's permanent, you will newer have this info again. And if user confirm, make them login again for check")
+    private var deleteAccountButton: some View {
+        Button(role: .destructive) {
+            Task {
+                do {
+                    try await vm.deleteAccount()
+                    isShowSignUp = true
+                } catch {
+                    print(error.localizedDescription)
+                }
+            }
+        } label: {
+            Text("Delete account")
         }
     }
 }

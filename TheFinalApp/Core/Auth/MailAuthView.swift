@@ -12,7 +12,7 @@ final class MailAuthViewModel: ObservableObject {
     @Published var mail: String = ""
     @Published var password: String = ""
     
-    let am = AuthManager.shared
+    let am = AuthenticationManager.shared
     
     func SignUp() async throws {
         guard !mail.isEmpty, !password.isEmpty else {

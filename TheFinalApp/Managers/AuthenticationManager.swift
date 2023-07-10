@@ -12,11 +12,13 @@ struct AuthResultModel {
     let uid: String
     let email: String?
     let photoURL: String?
+    let isAnonymous: Bool
     
     init(user: User) {
         self.uid = user.uid
         self.email = user.email
         self.photoURL = user.photoURL?.absoluteString
+        self.isAnonymous = user.isAnonymous
     }
 }
 
@@ -27,8 +29,8 @@ enum AuthProviderOption: String {
     case apple = "apple.com"
 }
 
-final class AuthManager {
-    static let shared = AuthManager()
+final class AuthenticationManager {
+    static let shared = AuthenticationManager()
     private init() {  }
     
     // Check User in local database
@@ -42,6 +44,17 @@ final class AuthManager {
     // Log off / Sign Out
     func signOut() throws {
         try Auth.auth().signOut()
+    }
+    
+    
+    func deleteUser() async throws {
+        guard let user = Auth.auth().currentUser else {
+            throw URLError(.badURL)
+        }
+        
+        try await user.delete()
+        
+        
     }
     
     func getProvider() -> [AuthProviderOption] {
@@ -60,7 +73,7 @@ final class AuthManager {
 }
 
 // MARK: SIGN IN EMAIL
-extension AuthManager {
+extension AuthenticationManager {
     // Create User
     @discardableResult
     func createUser(email: String, password: String) async throws -> AuthResultModel {
@@ -93,7 +106,7 @@ extension AuthManager {
 
 // MARK: SIGN IN SSO
 
-extension AuthManager {
+extension AuthenticationManager {
     
     @discardableResult
     func SignInGoogle(idToken: String, accessToken: String ) async throws -> AuthResultModel {
@@ -112,5 +125,46 @@ extension AuthManager {
     func SignInCredential(credential: AuthCredential) async throws -> AuthResultModel {
         let item = try await Auth.auth().signIn(with: credential)
         return AuthResultModel(user: item.user)
+    }
+}
+
+
+// MARK: SIGN IN ANONYMOUSLY
+
+extension AuthenticationManager {
+    @discardableResult
+    func SignInAnonymous() async throws -> AuthResultModel {
+        // Initialize a Firebase credential, including the user's full name.
+        let authDataResult = try await Auth.auth().signInAnonymously()
+        return try await AuthResultModel(user: authDataResult.user)
+    }
+    
+    // link Anonymous Auth to a real Auth
+    func linkEmail(email: String, password: String) async throws -> AuthResultModel {
+        let credential = EmailAuthProvider.credential(withEmail: email, password: password)
+        guard let user = Auth.auth().currentUser else {
+            throw URLError(.badServerResponse)
+        }
+        let authDataResult = try await user.link(with: credential)
+        return AuthResultModel(user: authDataResult.user)
+    }
+    
+    func linkApple(token: SignInWithAppleResult) async throws -> AuthResultModel {
+        let credential = OAuthProvider.credential(withProviderID: AuthProviderOption.apple.rawValue, idToken: token.token, rawNonce: token.nonce)
+        return try await linkCredential(credential: credential)
+    }
+    
+    func linkGoogle(tokens: GoogleAuthModel) async throws -> AuthResultModel {
+        let credential = GoogleAuthProvider.credential(withIDToken: tokens.idToken,
+                                                       accessToken:  tokens.accessToken)
+        return try await linkCredential(credential: credential)
+    }
+    
+    private func linkCredential(credential: AuthCredential) async throws -> AuthResultModel {
+        guard let user = Auth.auth().currentUser else {
+            throw URLError(.badServerResponse)
+        }
+        let authDataResult = try await user.link(with: credential)
+        return AuthResultModel(user: authDataResult.user)
     }
 }

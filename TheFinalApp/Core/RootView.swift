@@ -20,7 +20,7 @@ struct RootView: View {
             }
         }
         .onAppear {
-            guard let user = try? AuthManager.shared.checkUserInDatabase() else {
+            guard let user = try? AuthenticationManager.shared.checkUserInDatabase() else {
                 self.isShowSignUp = true
                 return
             }
