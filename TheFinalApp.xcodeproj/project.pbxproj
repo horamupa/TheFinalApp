@@ -28,6 +28,7 @@
 		8DABCBF52A542A040003073B /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DABCBF42A542A040003073B /* Utilities.swift */; };
 		8DABCBF72A543D020003073B /* SignInGoogleHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DABCBF62A543D020003073B /* SignInGoogleHelper.swift */; };
 		8DABCBFB2A5445CE0003073B /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DABCBFA2A5445CE0003073B /* SettingsViewModel.swift */; };
+		8DD8D57C2A5EF41400A1510B /* WorkoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DD8D57B2A5EF41400A1510B /* WorkoutView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -50,6 +51,7 @@
 		8DABCBF42A542A040003073B /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		8DABCBF62A543D020003073B /* SignInGoogleHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInGoogleHelper.swift; sourceTree = "<group>"; };
 		8DABCBFA2A5445CE0003073B /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
+		8DD8D57B2A5EF41400A1510B /* WorkoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -157,6 +159,7 @@
 		8DABCBF82A5445AB0003073B /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				8DD8D57A2A5EF3FB00A1510B /* Workout */,
 				8D8C66F62A4F353500407208 /* RootView.swift */,
 				8D8C66ED2A4EFBCC00407208 /* Auth */,
 				8DABCBF92A5445B70003073B /* Settings */,
@@ -171,6 +174,14 @@
 				8DABCBFA2A5445CE0003073B /* SettingsViewModel.swift */,
 			);
 			path = Settings;
+			sourceTree = "<group>";
+		};
+		8DD8D57A2A5EF3FB00A1510B /* Workout */ = {
+			isa = PBXGroup;
+			children = (
+				8DD8D57B2A5EF41400A1510B /* WorkoutView.swift */,
+			);
+			path = Workout;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -267,6 +278,7 @@
 				8DABCBF52A542A040003073B /* Utilities.swift in Sources */,
 				8D8919C62A5832D600EBD0DE /* UIApplication.swift in Sources */,
 				8D2E63662A583B7A005B96CA /* SignInAppleHelper.swift in Sources */,
+				8DD8D57C2A5EF41400A1510B /* WorkoutView.swift in Sources */,
 				8DABCBFB2A5445CE0003073B /* SettingsViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
